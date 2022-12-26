@@ -1,0 +1,61 @@
+{
+    "translatorID":"f1ff9f87-3531-4db2-8cbc-7025872812f5",
+    "translatorType":2,
+    "label":"Zotero-Obsidian Quick Copy",
+    "creator":"Koen Raijer",
+    "target":"txt",
+    "minVersion":"2.0",
+    "maxVersion":"",
+    "priority":200,
+    "inRepository":false,
+    "displayOptions":{"exportCharset":"UTF-8"},
+    "lastUpdated":"2022-12-26 12:23:32"
+    }
+    
+    // Save at: /Users/YOURNAME/Zotero/translators
+    
+    function doExport() {
+        var output = "";
+    
+        var item;
+        while(item = Zotero.nextItem()) {
+            // title and link
+            var selectLink = "zotero://select/items/";
+            var library_id = item.libraryID ? item.libraryID : 0;
+            selectLink += library_id + "_" + item.key;
+            // output += "&quot;<a href=\"" + selectLink + "\">" + item.title + "</a>&quot;"; // &ldquo; &rdquo;
+    
+            var addition = "";
+    
+            // authors
+            var author = "";
+            if (item.creators !== undefined) {
+                for (var a = 0; a < 1; a++) {
+                    if (item.creators[a]["creatorType"] == "author") {
+                        author += item.creators[a]["lastName"]; // + ", " + item.creators[a]["firstName"];
+                    }
+                }
+                addition += author;
+            } else {
+                addition += "noauthor"
+            }
+
+    
+            // date
+            if (item.date !== undefined && item.date.length > 0) {
+                addition += ", " + item.date.substring(0,4);
+            } else {
+                addition += ", nodate";
+            }
+    
+            if (addition.length > 0) {
+                output += "([" + addition + "](" + selectLink + "))";
+            } else {
+                output += "([zotlink](" + selectLink + ")";
+            }
+    
+            Zotero.debug(item);
+        }
+    
+        Zotero.write(output);
+}
